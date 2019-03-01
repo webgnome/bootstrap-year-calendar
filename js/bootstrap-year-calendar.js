@@ -37,6 +37,8 @@
 			}
 		
 			this.options = {
+				startMonth: !isNaN(parseInt(opt.startMonth)) ? parseInt(opt.startMonth) : 0,
+				endMonth: !isNaN(parseInt(opt.endMonth)) ? parseInt(opt.endMonth) : 12,
 				startYear: !isNaN(parseInt(opt.startYear)) ? parseInt(opt.startYear) : new Date().getFullYear(),
 				minDate: opt.minDate instanceof Date ? opt.minDate : null,
 				maxDate: opt.maxDate instanceof Date ? opt.maxDate : null,
@@ -195,7 +197,7 @@
 
 			monthsDiv.append(bsRow);
 			
-			for(var m = 0; m < 12; m++) {
+			for(var m = this.options.startMonth; m < this.options.endMonth; m++) {
 				/* Container */
 				var monthDiv = $(document.createElement('div'));
 				monthDiv.addClass('month-container');
