@@ -2,6 +2,8 @@
 A fully customizable year calendar widget, now for Bootstrap 4 !
 You can find all details on the [official website](http://www.bootstrap-year-calendar.com/).
 
+This is a fork by [webworks nürnberg](https://wwnbg.de) of https://github.com/Paul-DS/bootstrap-year-calendar.
+
 
 ![alt tag](http://www.bootstrap-year-calendar.com/img/calendar.png)
 
