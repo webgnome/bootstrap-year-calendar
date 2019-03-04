@@ -404,6 +404,7 @@
 					
 					if(events[events.length - 1].startDate.getTime() == currentTime)
 					{
+						events[events.length - 1].startHalfDay = true;
 						elt.parent().addClass('day-start');
 						
 						if(events[events.length - 1].startHalfDay || this.options.alwaysHalfDay) {
@@ -426,6 +427,7 @@
 					}
 					else if(events[events.length - 1].endDate.getTime() == currentTime)
 					{
+						events[events.length - 1].endHalfDay = true;
 						elt.parent().addClass('day-end');
 						
 						if(events[events.length - 1].endHalfDay || this.options.alwaysHalfDay) {
@@ -530,12 +532,28 @@
 				cells.mousedown(function (e) {
 					if(e.which == 1) {
 						var currentDate = _this._getDate($(this));
+                        			let presentEvents = _this.getEvents(currentDate);
 					
-						if(_this.options.allowOverlap || _this.getEvents(currentDate).length == 0)
+						if(_this.options.allowOverlap || presentEvents.length == 0)
 						{
 							_this._mouseDown = true;
 							_this._rangeStart = _this._rangeEnd = currentDate;
 							_this._refreshRange();
+						} else if (presentEvents.length === 1 &&
+						    (
+							(presentEvents[0].startHalfDay && presentEvents[0].startDate.getTime() === currentDate.getTime()) ||
+							(presentEvents[0].endHalfDay && presentEvents[0].endDate.getTime() === currentDate.getTime())
+						    )
+						) {
+						    _this._mouseDown = true;
+						    _this._rangeStart = _this._rangeEnd = currentDate;
+						    if (presentEvents[0].startDate.getTime() === currentDate.getTime() && _this._rangeStart.getTime() === currentDate.getTime()) {
+							_this._rangeEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+						    }
+						    if (presentEvents[0].endDate.getTime() === currentDate.getTime() && _this._rangeEnd.getTime() === currentDate.getTime()) {
+							_this._rangeEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+						    }
+						    _this._refreshRange();
 						}
 					}
 				});
@@ -551,7 +569,8 @@
 							if(newDate < currentDate) {
 								var nextDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
 								while(newDate < currentDate) {
-									if(_this.getEvents(nextDate).length > 0)
+								        let presentEvents = _this.getEvents(nextDate);
+								        if (presentEvents.length > 0 && (!presentEvents[0].startHalfDay || presentEvents[0].startDate.getTime() === newDate.getTime()))
 									{
 										break;
 									}
@@ -563,7 +582,8 @@
 							else {
 								var nextDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() - 1);
 								while(newDate > currentDate) {
-									if(_this.getEvents(nextDate).length > 0)
+									let presentEvents = _this.getEvents(nextDate);
+									if (presentEvents.length > 0 && (!presentEvents[0].endHalfDay || presentEvents[0].endDate.getTime() === newDate.getTime()))
 									{
 										break;
 									}
